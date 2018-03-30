@@ -4,32 +4,37 @@ namespace ChunkedSum;
 
 class ChunkedSum
 {
-	
-	protected $collect;
-
-	function __construct($collect)
+	/**
+	 * split an array into chunks and get the list of sum of the each chunk
+	 * @param  array  $source       the array source to work on
+	 * @param         $key          the selected key
+	 * @param  int    $chunkedCount the size of each chunk
+	 * @return array                the list of sum of the each chunk
+	 */
+	public function getChunkedCollectSums(array $source, $key, int $size) : array
 	{
-		$this->collect = $collect;
+		if ($size <= 0) {
+			throw new RangeException("size should be bigger than zero.");
+		}
+
+		$chunkedSums = [];
+		foreach (array_chunk($source, $size) as $chunkedCollect) {
+			$chunkedSums[] = $this->getArraySumByKey($chunkedCollect, $key);
+		}
+
+		return $chunkedSums;
 	}
 
-	public function getSum($property, $chunked_count)
+	/**
+	 * Calculate the sum of values which selected by key in an array
+	 * @param  array $array    the input array
+	 * @param        $key      the selected key
+	 * @return int             sum
+	 */
+	private function getArraySumByKey($array, $key) : int
 	{
-		$chunked_sum = [];
-
-		if (!array_key_exists($property, $this->collect)) {
-			throw new Exception("property not in collect", 1);
-		}
-
-		if ($chunked_count < 0) {
-			throw new Exception("chunked count must bigger than 0", 1);
-		}
-
-		$chunked_collect = array_chunk($this->collect[$property], $chunked_count);
-
-		foreach ($chunked_collect as $key => $chunked_item) {
-			$chunked_sum[] = array_sum($chunked_item);
-		}
-
-		return $chunked_sum;
+		return array_reduce($array, function ($carry, $item) use ($key) {
+			return $carry + $item[$key];
+		});
 	}
 }
