@@ -1,7 +1,8 @@
 <?php 
 
-namespace ChunkedSum;
+namespace App;
 
+use App\ChunkedSum;
 use PHPUnit\Framework\TestCase;
 
 class ChunkedSumTest extends TestCase
